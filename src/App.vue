@@ -1,12 +1,71 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Delhaize</router-link> |
-      <router-link to="/about">Lidl</router-link>
-    </div>-->
-    <router-view />
+    <h3 class="title is-4">
+      <transition name="fly-in-delayed">
+        <router-link
+          :key="routes[indexLabel].route"
+          v-on:click.native="changeRouteLink"
+          :to="routes[indexLabel].route"
+          class="navitem"
+        >{{routes[indexRoute].label}}</router-link>
+      </transition>
+      <transition name="fly-in">
+        <Wifi v-if="!statusOnline"></Wifi>
+      </transition>
+      <transition name="fly-in">
+        <Loader v-if="makingApiCalls"></Loader>
+      </transition>
+    </h3>
+
+    <transition name="fly-in-delayed">
+      <router-view @setMakingApiCalls="setMakingApiCalls" />
+    </transition>
   </div>
 </template>
+
+<script>
+import Wifi from "@/components/Wifi.vue";
+import Loader from "@/components/Loader.vue";
+
+export default {
+  components: {
+    Wifi,
+    Loader
+  },
+  data() {
+    return {
+      statusOnline: navigator.onLine,
+      makingApiCalls: false,
+      indexRoute: 0,
+      indexLabel: 1,
+      routes: [
+        { route: "/", label: "Boodschappen", name: "Groceries" },
+        { route: "/planning", label: "Planning", name: "Planning" },
+        { route: "/wordlist", label: "Woordenlijst", name: "WordList" }
+      ]
+    };
+  },
+  created() {
+    window.addEventListener("online", this.setStatusOnline);
+    window.addEventListener("offline", this.setStatusOffline);
+  },
+  methods: {
+    setStatusOnline() {
+      this.statusOnline = navigator.onLine;
+    },
+    setStatusOffline() {
+      this.statusOnline = navigator.onLine;
+    },
+    setMakingApiCalls(value) {
+      this.makingApiCalls = value;
+    },
+    changeRouteLink() {
+      this.indexRoute = (this.indexRoute + 1) % 3;
+      this.indexLabel = (this.indexLabel + 1) % 3;
+    }
+  }
+};
+</script>
 
 <style lang="scss">
 @import "~bulma/css/bulma.css";
@@ -24,21 +83,59 @@ html {
   color: #2c3e50;
   padding: 4%;
 }
-.overflow-scroll {
-  overflow: scroll;
+
+.fly-in {
+  animation: fly-in 4s;
+}
+.fly-in-enter-active {
+  animation: fly-in 0.5s;
+}
+.fly-in-leave-active {
+  animation: fly-in 0.5s reverse;
+}
+@keyframes fly-in {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.navitem {
+  color: inherit;
+}
+.fly-in-delayed-enter-active {
+  animation: fly-in 0.5s;
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+.fly-in-delayed-leave-active {
+  animation: fly-in reverse 0.5s;
 }
 
-.outer {
-  display: flex;
-  flex-flow: column;
-  height: 100%;
+@keyframes going {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50px);
+    opacity: 0;
+  }
 }
-
-.inner_fixed {
-  height: 100px;
-}
-
-.inner_remaining {
-  flex-grow: 1;
+@keyframes coming {
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 </style>

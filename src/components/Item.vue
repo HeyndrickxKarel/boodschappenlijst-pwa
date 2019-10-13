@@ -31,7 +31,6 @@ export default {
   },
   methods: {
     setStyle() {
-      console.log(this.$props.data.tag);
       switch (this.$props.data.tag) {
         case "Delhaize":
           this.style = "is-danger";
@@ -46,7 +45,6 @@ export default {
           this.style = "is-light";
           break;
       }
-      console.log(this.style);
     },
     deleteItem() {
       this.$emit("itemDeleted", this.data);

@@ -1,20 +1,10 @@
 <template>
-  <div class="home outer">
-    <div class="inner_fixed">
-      <h3 class="title is-4">
-        Boodschappen
-        <transition name="fly-in">
-          <Wifi v-if="!statusOnline"></Wifi>
-        </transition>
-      </h3>
-
-      <transition name="fly-in">
-        <Loader v-if="makingApiCalls"></Loader>
-      </transition>
+  <div class="Groceries">
+    <div>
       <Add @itemAdded="addItem"></Add>
     </div>
 
-    <div class="overflow-scroll inner_remaining">
+    <div>
       <transition-group name="fly-in">
         <Item
           v-for="(item,index) in groceryList.items"
@@ -31,9 +21,7 @@
 
 <script>
 import Add from "@/components/Add.vue";
-import Loader from "@/components/Loader.vue";
 import Item from "@/components/Item.vue";
-import Wifi from "@/components/Wifi.vue";
 //import { ApiService } from "../services/apiService";
 import axios from "axios";
 var baseURL = "https://peaceful-dawn-70653.herokuapp.com/api/";
@@ -41,18 +29,15 @@ var baseURL = "https://peaceful-dawn-70653.herokuapp.com/api/";
 import { setTimeout, clearTimeout } from "timers";
 
 export default {
-  name: "home",
+  name: "Groceries",
   components: {
     Add,
     Item,
-    Loader,
-    Wifi
   },
   data() {
     return {
       groceryList: [{ value: "Don't mind me" }],
       timer: undefined,
-      makingApiCalls: false,
       storedItems: Array,
       storedToBeAddedItems: Array,
       storedToBeRemovedItems: Array,
@@ -60,14 +45,12 @@ export default {
       storedSugItems: Array,
       storedToBeAddedSugItems: Array,
       storedToBeRemovedSugItems: Array,
-      statusOnline: navigator.onLine,
       synching: false,
       waiting: false
     };
   },
   created() {
     window.addEventListener("online", this.setStatusOnline);
-    window.addEventListener("offline", this.setStatusOffline);
   },
   mounted() {
     this.loadStorage();
@@ -247,14 +230,13 @@ export default {
       this.setGroceryList(items, suggestedItems);
     },
     synchronize() {
-      this.makingApiCalls = true;
+      this.$emit("setMakingApiCalls", true);
       if (this.timer) {
         clearTimeout(this.timer);
         this.timer = undefined;
       }
       if (this.synching) {
         this.waiting = true;
-        console.log("waiting");
         if (!this.waiting) setTimeout(this.synchronize, 100);
       } else {
         this.waiting = false;
@@ -271,23 +253,23 @@ export default {
               this.updateGroceryList();
             })
             .catch(error => {
-              console.log(error);
-              this.makingApiCalls = false;
+              this.$emit("setMakingApiCalls", false);
               this.synching = false;
+              throw error;
             });
         }, 1000);
       }
     },
     updateGroceryList() {
-      this.makingApiCalls = false;
+      this.$emit("setMakingApiCalls", false);
       axios
         .put(baseURL + "grocerylist/items", this.groceryList.items)
         .then(() => {})
         .catch(error => {
-          console.log(error);
+          throw error;
         })
         .finally(() => {
-          this.makingApiCalls = false;
+          this.$emit("setMakingApiCalls", false);
           this.synching = false;
         });
     },
@@ -305,11 +287,7 @@ export default {
       };
     },
     setStatusOnline() {
-      this.statusOnline = navigator.onLine;
       this.synchronize();
-    },
-    setStatusOffline() {
-      this.statusOnline = navigator.onLine;
     },
     isItemAlreadyInArray(array, item) {
       let exists = false;
@@ -331,29 +309,6 @@ export default {
   transition: 0.4s;
 }
 
-.fly-in {
-  animation: fly-in 4s;
-}
-.fly-in-enter-active {
-  animation: fly-in 0.5s;
-}
-.fly-in-leave-active {
-  animation: fly-in 0.5s reverse;
-}
-@keyframes fly-in {
-  0% {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
 .not-synched {
   color: #d9534e;
 }
