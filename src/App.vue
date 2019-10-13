@@ -6,7 +6,7 @@
           :key="routes[indexLabel].route"
           v-on:click.native="changeRouteLink"
           :to="routes[indexLabel].route"
-          class="navitem"
+          class="not-styled-link"
         >{{routes[indexRoute].label}}</router-link>
       </transition>
       <transition name="fly-in">
@@ -107,7 +107,7 @@ html {
     opacity: 1;
   }
 }
-.navitem {
+.not-styled-link {
   color: inherit;
 }
 .fly-in-delayed-enter-active {
@@ -137,5 +137,8 @@ html {
     transform: translateX(0);
     opacity: 1;
   }
+}
+.w-100{
+  width: 100%;
 }
 </style>
