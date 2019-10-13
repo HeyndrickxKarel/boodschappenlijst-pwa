@@ -1,0 +1,12 @@
+{
+  "storedToBeAddedItems": [
+    { "value": "Appel", "checked": false },
+    { "value": "Banaan", "checked": true }
+  ],
+  "storedToBeRemovedItems": [{ "value": "Peer", "checked": false }],
+  "storedToBeAddedSugItems": [""],
+  "storedToBeRemovedSugItems": [""]
+}[
+  ({ "value": "Appel", "checked": false },
+  { "value": "Banaan", "checked": true })
+][{ "value": "Peer", "checked": false }]

@@ -1,31 +1,44 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <!-- <div id="nav">
+      <router-link to="/">Delhaize</router-link> |
+      <router-link to="/about">Lidl</router-link>
+    </div>-->
+    <router-view />
   </div>
 </template>
 
-<style>
+<style lang="scss">
+@import "~bulma/css/bulma.css";
+@import "~pretty-checkbox/src/pretty-checkbox.scss";
+@import url("https://fonts.googleapis.com/css?family=Raleway&display=swap");
+
+html {
+  background-color: #fafafa;
+}
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", "Raleway", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
+  padding: 4%;
 }
-#nav {
-  padding: 30px;
+.overflow-scroll {
+  overflow: scroll;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.outer {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.inner_fixed {
+  height: 100px;
+}
+
+.inner_remaining {
+  flex-grow: 1;
 }
 </style>
